@@ -37,6 +37,10 @@ FTS4_SQL = 'create virtual table document_index_4 using fts4(text, source uninde
 FTS5_SQL = 'create virtual table document_index_5 using fts5(text, source unindexed, tokenize = "unicode61 remove_diacritics 2")'  # noqa: E501
 
 
+def initialize_database(database, name):
+    database.init(name, pragmas={'journal_mode': 'wal'})
+
+
 def get_options() -> Namespace:
     parser = ArgumentParser()
     parser.add_argument('name', metavar='DBNAME', help='Database file name')
@@ -58,7 +62,7 @@ def main():
             os.remove(opts.name)
         else:
             sys.exit(f'File {opts.name} exists, use --force to overwrite')
-    db.init(opts.name, pragmas={'journal_mode': 'wal'})
+    initialize_database(db, opts.name)
     db.create_tables([PeeweeIndex4, PeeweeIndex5])
     for statement in [FTS4_SQL, FTS5_SQL]:
         db.execute_sql(statement)
