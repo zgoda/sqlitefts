@@ -1,0 +1,7 @@
+Jakiś czas temu zacząłem robić hobbistycznie aplikację webową, która ma pewne dość szczególne wymagania, dość powiedzieć że nie można w niej użyć zbyt nowoczesnych rzeczy, takich jak np zbyt nowy Javascript. Dlatego większą jej część postanowiłem zrobić jako CLI.
+
+
+Nie ma co prawda wymagań co do szczegółowych wersji obsługiwanych przeglądarek, natomiast nie może się opierać na Javascripcie, tylko działać w tradycyjnej technologii żądanie/odpowiedź i wyświetlać wyrenderowany HTML.
+Jednym z elementów aplikacji jest oczywiście panel/sekcja zarządzania treścią, a to celem utrudnienia sobie i ewentualnym użytkownikom postanowiłem zaimplementować jako CLI z interaktywnym interpreterem.
+Aplikacja jest we Flasku (a to ci niespodzianka!), więc początek CLI był oczywisty &mdash; Flask korzysta z Click, a przy jego pomocy można zbudować nawet bardzo skomplikowane struktury wierszy poleceń. Aż w końcu doszedłem do momentu, kiedy Click przestał mi wystarczać, bo potrzebowałem dać możliwość interaktywnej pracy z danymi. Coś jak REPL, czyli Cmd lub Cmd2, a do tego pobieranie danych od użytkownika, sprawdzanie poprawności i generalnie interakcja, czyli któraś z kopii inquirer.js.
+W efekcie niezły miszmasz mi się tam zrobił.

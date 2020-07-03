@@ -1,0 +1,12 @@
+Jest kilka sposobów, żeby w skrypcie instalacyjnym pakietu pobrać wersję w sposób bezpieczny. Niepełną listę takich możliwości można znaleźć np. w jednym z dokumentów PyPA (proszę zauważyć, że ostatnia propozycja nie jest taka całkiem bezpieczna, o czym jest wspomniane w notce). Ale oczywiście to nie koniec.
+
+
+Kilka miesięcy temu wpadłem na pomysł, by do uzyskania tej wartości użyć AST, ale nie miałem jakoś specjalnie czasu, by do tego usiąść i to ogarnąć. I proszę, znalazłem przykład wykorzystania AST do tego w kodzie pakietu pydal, choć nie w taki sposób jak zamierzałem.
+```python
+_version_re = re.compile(r"version\s+=\s+(.*)")
+with open("pydal/init.py", "rb") as f:
+    version = str(
+        ast.literal_eval(_version_re.search(f.read().decode("utf-8")).group(1))
+    )
+```
+Jest to trochę bezpieczniejszy sposób nr 3 z podanego wcześniej dokumentu PyPA (nie wykonuje się exec()) i ma on tę wyższość, że produkuje zwykły obiekt str, a nie słownik.

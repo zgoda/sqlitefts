@@ -1,0 +1,20 @@
+Czas zabrać się do roboty.
+
+Po zebraniu do kupy wymagań co do aplikacji przyszedł czas na strukturę. Ponieważ jest to Javascript osadzony w HTML, to nie będzie oddzielnego katalogu na frontend, a wszystko będzie umieszczone w katalogu statycznych (hehe) zasobów aplikacji. Tak mniej-więcej to wygląda:
+
+Dość typowa aplikacja we Flasku z dwoma blueprintami, main który generuje HTML i api z którym komunikuje się Javascript, który z kolei umieszczony jest w katalogu static. Preact i HTM są jako jeden plik, który dla niepoznaki nazwałem preact.min.js, ale tak naprawdę jest to składanka obu bibliotek. Kod Javascript który działa na konkretnej stronie jest w katalogu static/js, po jednym pliku na każdą stronę. Pliki te są dołączane do strony jako moduły (dzięks, ES6!):
+django
+{% block pagejs %}
+&lt;script type="module" src="{{ url_for('static', filename='js/poll.js') }}"&gt;&lt;/script&gt;
+{% endblock %}
+Dzieje się to pod koniec sekcji &lt;body /&gt; natomiast główny komponent Preacta jest montowany we wcześniejszym bloku:
+django
+{% block content %}
+&lt;h1&gt;Poll {{ poll.title }}&lt;/h1&gt;
+&lt;p class="subtitle"&gt;{{ poll.description }}&lt;/p&gt;
+&lt;div id="app"&gt;
+&lt;/div&gt;
+{% endblock %}
+Prosto? Bardzo prosto.
+Do tego zwyczajowe boilerplate aplikacji we Flasku, ale to idzie migiem. A najciekawsze rzeczy dopiero się zaczynają, bo na razie nie ma tu niczego interesującego.
+Nie żebym uważał Javascript za cokolwiek interesującego.

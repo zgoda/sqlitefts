@@ -1,0 +1,9 @@
+Odkąd zostałem linuksiarzem, czyli już od jakichś 20 lat, chciałem mieć PDA z linuksem. Oczywiście, w początkach XXI wieku te urządzenia kosztowały nerkę (mniej więcej jak teraz iPhone), więc musiałem o nich zapomnieć. Ale teraz, gdy minęło trochę czasu i produkt typu PDA w ogóle zniknął z rynku zastąpiony coraz potężniejszymi smartfonami...
+
+Za 40 złotych z przesyłką kupiłem IPaq'a h3970.
+
+
+Jak widać urządzenie jeszcze działa pod kontrolą Windows, ale da się na nim zainstalować linuksa i właśnie to zamierzam zrobić.
+Żeby nie było za łatwo, to jedyną dystrybucją jaka da się na tym zainstalować w dzisiejszych czasach jest Yocto. I to wcale nie nowe, bo ostatnią wersja która wspiera h3900 jest 1.7 (dizzy) z 2014 roku, ale to już jest tyko 5 lat różnicy, a nie 15.
+Tym niemniej problemy się mnożą. Już na samym początku okazało się, że trzeba budować używając dystrybucji wspieranej przez konkretne wydanie Yocto, czyli w przypadku Ubuntu co najwyżej 14.04. OK, będziemy ciorać to na wirtualce używając czegoś a la builder z YoeDistro, ale z Ubuntu 14.04 na pokładzie (z Debiana wspierany przez Yocto 1.7 jest tylko Wheezy, a tego YoeDistro nie dostarcza). Trzeba będzie tylko zbudować obraz i wrzucić go na hub Dockera, a potem dopisać konfigurację dla konkretnego sprzętu.
+Stay tuned, będzie tego więcej.

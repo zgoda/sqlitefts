@@ -1,0 +1,15 @@
+Powszechnie uważa się, że SQLite to jest baza która nie nadaje się do użycia w aplikacji webowej, w każdym razie nie na etapie produkcji. Rzeczywiście, w wielu (większości?) się nie sprawdzi z powodu ograniczeń jakie narzuca w kontekście współdzielenia, ale są pewne warunki, w których to nie ma żadnego znaczenia i wtedy SQLite sprawdza się doskonale.
+
+
+W skrócie chodzi o to, że jako silnik wbudowany nie jest ona przystosowana do używania w trybie współdzielonym, a przynajmniej nie w pełni. Chodzi o to, że nie ma żadnego sposobu, by bezpiecznie przeprowadzić jednoczesny zapis przez więcej niż jeden proces/wątek. Wydawałoby się, że to dyskwalifikuje z wykorzystania jako zaplecza w aplikacji webowej, ale czy na pewno? Czy na pewno nie ma takich aplikacji, w których dokonywany jest niemal wyłącznie odczyt, a zapis jest albo serializowany, albo w ogóle jest tylko jeden proces który coś zapisuje?
+Nie ma?
+Ależ oczywiście że są. I wcale nie są jakąś rzadkością. Po prostu większość wzrusza na nie ramionami.
+Weźmy na przykład taki blog osobisty. Jest jeden edytor, który dokonuje zmian w zawartości bazy danych, wszyscy pozostali użytkownicy mają dostęp tylko do odczytu. Współbieżny odczyt nie stanowi problemu, a przy niewielkiej modyfikacji parametrów połączenia również współbieżny odczyt przez wiele procesów/wątków i zapis przez jeden proces/wątek (domyślnie zapis blokuje całą tabelę na wyłączność). Czy są jeszcze jakieś inne przypadki? Pewnie są, trzeba się tylko rozejrzeć.
+Tym, co z zapyziałej bazy trybu developerskiego zrobi produkcyjne zaplecze aplikacji webowej są polecenia PRAGMA. Kompletny opis wszystkich poleceń PRAGMA znajduje się na stronie dokumentacji SQLite, ja zaś skupię się na tych kilku interesujących w kontekście aplikacji webowej.
+
+journal_mode = WAL - to polecenie włącza tryb write-ahead log dziennika zmian, który pozwala na jednoczesny odczyt i zapis bez blokowania na wyłączność;
+foreign_keys = 1 - to polecenie włącza obsługę kluczy obcych;
+ignore_check_constraints = 0 - to polecenie wyłącza ignorowanie ograniczeń CHECK w definicji kolumn, od niedawna jest to ustawienie domyślne;
+cache_size = -64000 - to polecenie ustawia rozmiar pamięci podręcznej stron, jest ono podawane w formacie -1 * rozmiar w KiB, przykładowa wartość oznacza 64 MiB pamięci podręcznej (wartość dodatnia oznacza ilość stron do przechowywania w pamięci, nie ich rozmiar);
+
+Z tymi 4 ustawieniami SQLite jest wyjątkowo wydajne, ma wyższy stopień zgodności ze standardem SQL (co ułatwia życie w przypadku używania ORM) - oraz może być jednocześnie używane w trybie zapisu i odczytu.
