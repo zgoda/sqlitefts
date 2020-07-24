@@ -94,6 +94,42 @@ THREADSAFE=1
 USE_URI
 ```
 
+From that it looks SQLite was compiled using the same flags so I will expect the same results. Out of curiosity, I checked how this looks for latest Fedora 32 Server.
+
+### Fedora 32
+
+```shell
+python3 -VV
+Python 3.8.3 (default, May 29 2020, 00:00:00)
+[GCC 10.1.1 20200507 (Red Hat 10.1.1-1)]
+```
+
+```shell
+sqlite3
+SQLite version 3.32.3 2020-06-18 14:00:33
+Enter ".help" for usage hints.
+Connected to a transient in-memory database.
+Use ".open FILENAME" to reopen on a persistent database.
+sqlite> PRAGMA compile_options;
+COMPILER=gcc-10.1.1 20200507 (Red Hat 10.1.1-1)
+DISABLE_DIRSYNC
+ENABLE_BYTECODE_VTAB
+ENABLE_COLUMN_METADATA
+ENABLE_DBSTAT_VTAB
+ENABLE_FTS3
+ENABLE_FTS3_PARENTHESIS
+ENABLE_FTS4
+ENABLE_FTS5
+ENABLE_JSON1
+ENABLE_RTREE
+ENABLE_STMTVTAB
+ENABLE_UNKNOWN_SQL_FUNCTION
+ENABLE_UNLOCK_NOTIFY
+HAVE_ISNAN
+SECURE_DELETE
+THREADSAFE=1
+```
+
 ## Test scope
 
 The only ORM that explicitly support FTS is [Peewee](http://docs.peewee-orm.com/en/latest/peewee/sqlite_ext.html#sqlite-fts), with others like SQLAlchemy or Pony user has to resort to using *raw* SQL so there is no point in testing them. And since both platforms provide FTS4 there's no way to test FTS3 support using Peewee (and there is no point in testing it with raw access since it's virtually identical wrt search behaviour and the only difference is in performance) so finally scope of tests is as follows:
