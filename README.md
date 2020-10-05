@@ -4,6 +4,10 @@
 
 Various aspects of FTS extensions can be changed at compile time, but we will use only system provided binaries that are available in Ubuntu 20.04 and Debian 10 because this is what's system provided Python 3 standard library uses, and we will be using only system-provided Python 3.
 
+## Why Polish language is specific
+
+It's not **that** specific for that matter. Polish language, as almost all Slavic languages, is rich with forms, both regular and irregular. For a long time this was a key limiting factor for search facilities to provide both acceptable quality and user friendly search experience. Things changed with adoption of Stempel and Morfologik libraries, but its use is limited to Lucene based search facilities like ElasticSearch and Solr. None of readily available embedded search facilities with Python interface provide such level of support for Polish language. I will try to research and collect both SQLite 3 setup and hints on how to code embedded search facility for Python applications that provides acceptable result quality and unobtrusive user experience.
+
 ## Platforms and software versions
 
 The same set of tests will be performed on both platforms using default Python 3 versions.
@@ -147,8 +151,8 @@ Using `porter` tokenizer does not make much sense for Polish, and `icu` tokenize
 
 ## Corpus
 
-The corpus used for testing purpose will be a collection of ~50 blog texts authored by me in years 2013-2020 that can be found on [my blog](https://beergeek.zgodowie.org) pages. This is UTF-8 encoded text rich with IT terms, containing excerpts of computer code and occasional English fragments.
+The corpus used for testing purpose will be a collection of ~50 blog texts authored by me in years 2013-2020 that can be found on [my blog](https://devlog.zgodowie.org) pages. This is UTF-8 encoded text rich with IT terms, containing excerpts of computer code and occasional English fragments.
 
 ## Test result scoring
 
-The best support for Polish language analysis is provided by Lucene based solutions, like Elasticsearch or Solr. Both of these packages provide Stempel algorythmic analyzer and filter, while Solr also provides dictionary based Morfologik filter and lemmatizer. To score test results we'll be using Elasticsearch 7.8 with Stempel plugin.
+The best support for Polish language analysis is provided by Lucene based solutions, like ElasticSearch or Solr. Both of these packages provide Stempel algorythmic analyzer and filter, while Solr also provides dictionary based Morfologik filter and lemmatizer. To score test results we'll be using ElasticSearch 7.9 with Stempel plugin. If you want to run benchmark please be advised that the ElasticSearch-OSS Docker image is ~350 MB. It is not stored at Docker Hub so don't worry, it will not count towards your daily limit of pull operations.

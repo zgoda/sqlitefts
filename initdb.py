@@ -49,13 +49,12 @@ class PeeweeIndex5S(FTS5Model):
         database = db
 
 
-FTS4_SQL_U = 'create virtual table di_4_u using fts4(text, source unindexed, tokenize=unicode61 "remove_diacritics=2")'  # noqa: E501
-
-FTS4_SQL_S = 'create virtual table di_4_s using fts4(text, source unindexed)'  # noqa: E501
-
-FTS5_SQL_U = 'create virtual table di_5_u using fts5(text, source unindexed, tokenize = "unicode61 remove_diacritics 2")'  # noqa: E501
-
-FTS5_SQL_S = 'create virtual table di_5_s using fts5(text, source unindexed)'  # noqa: E501
+SQL_TABLE_STATEMENTS = {
+    'fts4_u': 'create virtual table di_4_u using fts4(text, source unindexed, tokenize=unicode61 "remove_diacritics=2")',  # noqa: E501
+    'fts4_s': 'create virtual table di_4_s using fts4(text, source unindexed)',
+    'fts5_u': 'create virtual table di_5_u using fts5(text, source unindexed, tokenize = "unicode61 remove_diacritics 2")',  # noqa: E501
+    'fts5_s': 'create virtual table di_5_s using fts5(text, source unindexed)',
+}
 
 
 def initialize_database(database, name):
@@ -67,11 +66,11 @@ def get_options() -> Namespace:
     parser.add_argument('name', metavar='DBNAME', help='Database file name')
     parser.add_argument(
         '-f', '--force', action='store_true', dest='force_overwrite',
-        help='Overwrite database if exists'
+        help='Overwrite database if exists',
     )
     parser.add_argument(
         '-c', '--corpus-dir', default='corpus',
-        help='Filesystem location of corpus directory [default: corpus]',
+        help='Filesystem location of corpus directory [default: %default]',
     )
     return parser.parse_args()
 
@@ -85,28 +84,17 @@ def main():
             sys.exit(f'File {opts.name} exists, use --force to overwrite')
     initialize_database(db, opts.name)
     db.create_tables([PeeweeIndex4S, PeeweeIndex4U, PeeweeIndex5S, PeeweeIndex5U])
-    for statement in [FTS4_SQL_S, FTS4_SQL_U, FTS5_SQL_S, FTS5_SQL_U]:
+    for statement in SQL_TABLE_STATEMENTS.values():
         db.execute_sql(statement)
     for fn in os.listdir(opts.corpus_dir):
         path = os.path.join(opts.corpus_dir, fn)
         with open(path) as fp:
             text = fp.read()
-        PeeweeIndex4S.insert({'text': text, 'source': fn}).execute()
-        PeeweeIndex4U.insert({'text': text, 'source': fn}).execute()
-        PeeweeIndex5S.insert({'text': text, 'source': fn}).execute()
-        PeeweeIndex5U.insert({'text': text, 'source': fn}).execute()
-        db.execute_sql(
-            'insert into di_4_s (text, source) values (?, ?)', (text, fn)
-        )
-        db.execute_sql(
-            'insert into di_4_u (text, source) values (?, ?)', (text, fn)
-        )
-        db.execute_sql(
-            'insert into di_5_s (text, source) values (?, ?)', (text, fn)
-        )
-        db.execute_sql(
-            'insert into di_5_u (text, source) values (?, ?)', (text, fn)
-        )
+        for cls in [PeeweeIndex4S, PeeweeIndex4U, PeeweeIndex5S, PeeweeIndex5U]:
+            cls.insert({'text': text, 'source': fn}).execute()
+        for tbl_name in ['di_4_s', 'di_4_u', 'di_5_s', 'di_5_u']:
+            sql = f'insert into {tbl_name} (text, source) values (?, ?)'
+            db.execute_sql(sql, (text, fn))
 
 
 if __name__ == '__main__':
