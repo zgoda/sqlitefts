@@ -15,13 +15,13 @@ The same set of tests will be performed on both platforms using default Python 3
 ### Ubuntu 20.04
 
 ```shell
-python3 -VV
+$ python3 -VV
 Python 3.8.2 (default, Apr 27 2020, 15:53:34)
 [GCC 9.3.0]
 ```
 
 ```shell
-sqlite3
+$ sqlite3
 SQLite version 3.31.1 2020-01-27 19:55:54
 Enter ".help" for usage hints.
 Connected to a transient in-memory database.
@@ -58,13 +58,13 @@ USE_URI
 ### Debian 10
 
 ```shell
-python3 -VV
+$ python3 -VV
 Python 3.7.3 (default, Dec 20 2019, 18:57:59)
 [GCC 8.3.0]
 ```
 
 ```shell
-sqlite3
+$ sqlite3
 SQLite version 3.27.2 2019-02-25 16:06:06
 Enter ".help" for usage hints.
 Connected to a transient in-memory database.
@@ -103,13 +103,13 @@ From that it looks SQLite was compiled using the same flags so I will expect the
 ### Fedora 32
 
 ```shell
-python3 -VV
+$ python3 -VV
 Python 3.8.3 (default, May 29 2020, 00:00:00)
 [GCC 10.1.1 20200507 (Red Hat 10.1.1-1)]
 ```
 
 ```shell
-sqlite3
+$ sqlite3
 SQLite version 3.32.3 2020-06-18 14:00:33
 Enter ".help" for usage hints.
 Connected to a transient in-memory database.
@@ -147,7 +147,7 @@ The meaning of `remove_diacritics=2` is explained in SQLite docs:
 
 > The remove_diacritics option may be set to "0", "1" or "2". The default value is "1". If it is set to "1" or "2", then diacritics are removed from Latin script characters as described above. However, if it is set to "1", then diacritics are not removed in the fairly uncommon case where a single unicode codepoint is used to represent a character with more that one diacritic. For example, diacritics are not removed from codepoint 0x1ED9 ("LATIN SMALL LETTER O WITH CIRCUMFLEX AND DOT BELOW"). This is technically a bug, but cannot be fixed without creating backwards compatibility problems. If this option is set to "2", then diacritics are correctly removed from all Latin characters.
 
-Using `porter` tokenizer does not make much sense for Polish, and `icu` tokenizer is not available on any of test platforms.
+Using `porter` tokenizer does not make much sense for Polish, and `icu` tokenizer is not available on any of test platforms so only `simple` and `unicode61` tokenizers are tested.
 
 ## Corpus
 
@@ -155,4 +155,18 @@ The corpus used for testing purpose will be a collection of ~50 blog texts autho
 
 ## Test result scoring
 
-The best support for Polish language analysis is provided by Lucene based solutions, like ElasticSearch or Solr. Both of these packages provide Stempel algorythmic analyzer and filter, while Solr also provides dictionary based Morfologik filter and lemmatizer. To score test results we'll be using ElasticSearch 7.9 with Stempel plugin. If you want to run benchmark please be advised that the ElasticSearch-OSS Docker image is ~350 MB. It is not stored at Docker Hub so don't worry, it will not count towards your daily limit of pull operations.
+The best support for Polish language analysis is provided by Lucene based solutions, like ElasticSearch or Solr. Both of these packages provide Stempel algorythmic analyzer and filter, while Solr also provides dictionary based Morfologik filter and lemmatizer. To score test results we'll be using ElasticSearch 7.9 with Stempel plugin. If you want to run benchmark please be advised that the ElasticSearch-OSS Docker image is ~350 MB. It is not stored at Docker Hub so don't worry, it will not count towards your daily limit of pull operations imposed by Docker Hub.
+
+## The results
+
+### Raw SQL
+
+Returned results for all queries are exactly the same.
+
+In general FTS5 is significantly faster than FTS4. And `simple` is usually marginally faster than `unicode61`.
+
+If you get different results then please file a ticket describing corpus and query, I will update the benchmark if the corpus is freely available. My original benchamark may be skewed by both specific corpus and spesific queries.
+
+At this point my recommendation will be to use FTS5 with `simple` tokenizer (the default). It should not have any impact on quality because Polish (and most other Slavic languages) doesn't use multi-character diacritics. If your language uses multi-character diacritics, like the one described in `remove_diacritics=2` explanation above, then `unicode61` is the only option.
+
+What's most baffling for me it's that fuzzy matching (with `*`) is sometimes faster than exact matching but with that small sample pool it may as well mean nothing (it's ~50 samples, it's nothing).

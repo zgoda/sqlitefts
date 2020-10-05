@@ -2,52 +2,7 @@ import os
 import sys
 from argparse import ArgumentParser, Namespace
 
-from playhouse.sqlite_ext import (
-    FTS5Model, FTSModel, RowIDField, SearchField, SqliteExtDatabase,
-)
-
-db = SqliteExtDatabase(None)
-
-
-class PeeweeIndex4U(FTSModel):
-    rowid = RowIDField()
-    text = SearchField()
-    source = SearchField(unindexed=True)
-
-    class Meta:
-        database = db
-        options = {
-            'tokenize': 'unicode61 "remove_diacritics=2"',
-        }
-
-
-class PeeweeIndex4S(FTSModel):
-    rowid = RowIDField()
-    text = SearchField()
-    source = SearchField(unindexed=True)
-
-    class Meta:
-        database = db
-
-
-class PeeweeIndex5U(FTS5Model):
-    text = SearchField()
-    source = SearchField(unindexed=True)
-
-    class Meta:
-        database = db
-        options = {
-            'tokenize': 'unicode61 remove_diacritics 2',
-        }
-
-
-class PeeweeIndex5S(FTS5Model):
-    text = SearchField()
-    source = SearchField(unindexed=True)
-
-    class Meta:
-        database = db
-
+from models import PeeweeIndex4S, PeeweeIndex4U, PeeweeIndex5S, PeeweeIndex5U, db
 
 SQL_TABLE_STATEMENTS = {
     'fts4_u': 'create virtual table di_4_u using fts4(text, source unindexed, tokenize=unicode61 "remove_diacritics=2")',  # noqa: E501
