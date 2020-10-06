@@ -8,7 +8,7 @@ Various aspects of FTS extensions can be changed at compile time, but we will us
 
 It's not **that** specific for that matter. Polish language, as almost all Slavic languages, is rich with forms, both regular and irregular. For a long time this was a key limiting factor for search facilities to provide both acceptable quality and user friendly search experience. Things changed with adoption of Stempel and Morfologik libraries, but its use is limited to Lucene based search facilities like ElasticSearch and Solr. None of readily available embedded search facilities with Python interface provide such level of support for Polish language. I will try to research and collect both SQLite 3 setup and hints on how to code embedded search facility for Python applications that provides acceptable result quality and unobtrusive user experience.
 
-Since no specific Polish tokenizer exists for SQLite, the texts will be tokenized with generic tokenizer and searches will be performed with wildcard matching.
+Since no specific Polish tokenizer exists for SQLite, the texts will be tokenized with generic tokenizer and searches will be performed with wildcard matching. This is what has been used for a long time before real stemmers/lemmatizers became available.
 
 ## Platforms and software versions
 
@@ -165,7 +165,7 @@ The best support for Polish language analysis is provided by Lucene based soluti
 
 Returned results for all queries are exactly the same.
 
-In general FTS5 is significantly faster than FTS4. And `simple` is usually marginally faster than `unicode61`.
+In general FTS5 is significantly faster than FTS4. And `simple` is **usually** marginally faster than `unicode61`.
 
 If you get different results then please file a ticket describing corpus and query, I will update the benchmark if the corpus is freely available. My original benchmark may be skewed by both specific corpus and specific queries.
 
