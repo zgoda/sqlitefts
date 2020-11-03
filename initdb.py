@@ -13,7 +13,11 @@ SQL_TABLE_STATEMENTS = {
 
 
 def initialize_database(database, name):
-    database.init(name, pragmas={'journal_mode': 'wal'})
+    database.init(name, pragmas={
+        'journal_mode': 'wal',
+        'cache_size': -1 * 64000,
+        'synchronous': 0,
+    })
 
 
 def get_options() -> Namespace:
